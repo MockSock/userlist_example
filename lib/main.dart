@@ -39,35 +39,35 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('users').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Text('Loading . . .');
-            }
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Text('Loading . . .');
+          }
 
-            if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            }
+          if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          }
 
-            final documents = snapshot.data!.docs;
-            final userList = documents.map((docs) => ListTile(
-                  title: Text(docs['name']),
-                  subtitle: Text(docs['email']),
-                  leading: Column(
-                    children: <Widget>[
-                      Text(docs['age'].toString()),
-                      const Text('Years Old'),
-                    ],
-                  ),
-                ));
+          final documents = snapshot.data!.docs;
+          final userList = documents
+              .map((doc) => ListTile(
+                    title: Text(doc['name'] ?? 'No Value Found'),
+                    subtitle: Text(doc['email'] ?? 'No Value Found'),
+                    leading: Column(
+                      children: <Widget>[
+                        Text(doc['age'].toString()),
+                        const Text('Years Old'),
+                      ],
+                    ),
+                  ))
+              .toList();
 
-            return ListView(
-              children: userList.toList(),
-            );
-          },
-        ),
+          return ListView(
+            children: userList,
+          );
+        },
       ),
     );
   }
